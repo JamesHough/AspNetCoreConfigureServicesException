@@ -15,16 +15,33 @@ namespace AllowOriginsException
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
 
+        private readonly IWebHostEnvironment Environment;
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            if (!this.Environment.IsDevelopment())
+            {
+                var someValue = Array.Empty<string>();
+
+                services.AddCors(
+                    builder => builder.AddPolicy(
+                        "cors",
+                        policy => policy
+                            .AllowAnyHeader()
+                            .WithMethods("GET", "POST", "PUT", "OPTIONS")
+                            .WithOrigins(someValue)
+                            .Build()));
+            }
+
             services.AddControllers();
         }
 
@@ -37,6 +54,7 @@ namespace AllowOriginsException
             }
 
             app.UseHttpsRedirection();
+            app.UseCors("cors");
 
             app.UseRouting();
 
