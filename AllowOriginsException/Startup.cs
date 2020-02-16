@@ -30,15 +30,13 @@ namespace AllowOriginsException
         {
             if (!this.Environment.IsDevelopment())
             {
-                var someValue = Array.Empty<string>();
-
                 services.AddCors(
                     builder => builder.AddPolicy(
                         "cors",
                         policy => policy
                             .AllowAnyHeader()
                             .WithMethods("GET", "POST", "PUT", "OPTIONS")
-                            .WithOrigins(someValue)
+                            .WithOrigins(Array.Empty<string>())
                             .Build()));
             }
 
